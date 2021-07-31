@@ -68,3 +68,22 @@ def round_pic(img,method='in'):
         # img.show()
         # bg.show()
     return bg
+
+def judge_rotation_and_export_size(img):
+        #根据exif信息判断旋转，如无exif信息，则根据图片宽高判断。
+        #参考文档：https://mercurial-bandicoot-c34.notion.site/PIL-7891e4c4cbb6419182c4e222b5a97b18
+        #274是exif信息里判断旋转的标签ID
+        exif_orientation_tag=274
+        if hasattr(img, "_getexif") and isinstance(img._getexif(), dict) and exif_orientation_tag in img._getexif():
+            exif_data=img._getexif()            
+            orientation = exif_data[exif_orientation_tag]        
+            if  orientation==6:
+                img=img.rotate(-90, expand=True)        
+            if orientation==8:
+                img=img.rotate(90, expand=True)
+        else:
+            pass
+        
+        w,h=img.size[0],img.size[1]
+
+        return {'img':img,'size':[w,h]}

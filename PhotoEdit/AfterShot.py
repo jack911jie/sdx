@@ -12,7 +12,7 @@ class Photo:
         self.logo_dir=config['logo及二维码文件夹']
         self.wtmk_src=os.path.join(self.logo_dir,'树带熊logo2_white.png')
 
-    def put_mark(self,pic='d:\\temp\\sdx\\003.jpg'):
+    def put_mark(self,pic='d:\\temp\\sdx\\004.jpg'):
         bg=Image.open(pic)
         #根据exif信息判断旋转，如无exif信息，则根据图片宽高判断。已写入模块
         pic_judged=pics_modify.judge_rotation_and_export_size(bg)

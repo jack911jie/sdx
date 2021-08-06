@@ -1,13 +1,21 @@
 import os
 import sys
-# sys.path.append(os.path.join(os.path.dirname(__file__),'config'))
+
+from numpy import save
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)),'modules'))
+import readConfig 
 import requests
 import re
 import json
+import time
+import pandas as pd
 
 class NotionApi:
     def __init__(self):
         self.token='secret_UKfTBbr16loEWvcq7ZUXtzxIturJJ2yK3EFdcB2JhIt'
+        config=readConfig.readConfig(os.path.join(os.path.dirname(__file__),'config','Notion.config'))
+        self.output_dir=config['输出文件夹']
+
         # self.id=id
 
     def id_format(self,id):
@@ -57,15 +65,20 @@ class NotionApi:
         return cus_name
 
     def get_waterbill(self,id):
+        print('\n正在连接Notion服务器获取数据……',end='')
         txt=self.get_notion(id=id)
+        print('完成')        
+        print('\n正在处理数据……',end='')
         dat=json.loads(txt)
-        res_out=[]
-        out=Vividict()
+        # print(dat)
+        res_out=[]        
         for result in dat['results']:
+            out=Vividict()
             res_merge=[]
             for property in result['properties']:
                 if property=='活动时间':
                     value=result['properties'][property]['date']['start']
+                    out[property]=value
                 if property=='价格':
                     value=result['properties'][property]['number']
                     out[property]=value
@@ -88,9 +101,27 @@ class NotionApi:
                 
                 
             res_out.append(out)
-                
+        print('完成')
         return res_out
 
+
+    def exp_waterbill(self,id,save_name='notion_waterbill',save_format='csv'):        
+        res=self.get_waterbill(id=id)
+        df=pd.DataFrame(res)        
+
+        # df=pd.read_csv('d:\\temp\\sdx\\notion_waterbill.csv',converters={'类型': eval,'姓名':eval})
+        df['姓名']=df['姓名'].apply(lambda x:','.join(x))
+        df['类型']=df['类型'].apply(lambda x:','.join(x))
+
+        print('\n正在导出{}文件……'.format(save_format),end='')
+        # df.to_csv(save_name,index=None)
+        save_name=os.path.join(self.output_dir,save_name+'.'+save_format)
+        if save_format=='csv':
+            df.to_csv(save_name,index=None)
+        if save_format=='xlsx':
+            df.to_excel(save_name,index=None)
+        # print(df)
+        print('完成')
 
 class Vividict(dict):
     def __missing__(self, key):
@@ -100,13 +131,9 @@ class Vividict(dict):
 
 if __name__=='__main__':    
     id=['2e240480dd03486c8fa4fc7781da0ef2','database_query']
-    # notion=NotionApi()
+    notion=NotionApi()
     # res=notion.get_waterbill(id=id)
-    t='''
-[{'价格': 1500, '类型': ['拍摄'], '姓名': ['张三', '王大'], '时间及项目': '20210726花园'}, {'价格': 1500, '类型': ['拍摄'], '姓名': ['张三', '王大'], 
-'时间及项目': '20210726花园'}, {'价格': 1500, '类型': ['拍摄'], '姓名': ['张三', '王大'], '时间及项目': '20210726花园'}, {'价格': 1500, '类型': ['拍摄
-'], '姓名': ['张三', '王大'], '时间及项目': '20210726花园'}, {'价格': 1500, '类型': ['拍摄'], '姓名': ['张三', '王大'], '时间及项目': '20210726花园'}, {'价格': 1500, '类型': ['拍摄'], '姓名': ['张三', '王大'], '时间及项目': '20210726花园'}, {'价格': 1500, '类型': ['拍摄'], '姓名': ['张三', '王大'], 
-'时间及项目': '20210726花园'}]
-'''
-    print(t)
+    # print(res)
+    notion.exp_waterbill(id=id,save_name='notiton_export',save_format='xlsx')
+
     

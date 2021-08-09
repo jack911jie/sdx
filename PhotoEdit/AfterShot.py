@@ -61,7 +61,7 @@ class Photo:
         return img
 
     def group_mark(self,pic_dir='q:\\temp\\sdx\\to_mark',logo_type='pic',new_size=''):
-        out_dir=os.path.join(os.path.dirname(pic_dir),'mark_'+datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
+        out_dir=os.path.join(os.path.dirname(pic_dir),'mark_'+datetime.datetime.now().strftime('%Y%m%d%H%M%S')+'_logotype_'+logo_type)
         
         fns_to_mark=[]
         for fn in os.listdir(pic_dir):

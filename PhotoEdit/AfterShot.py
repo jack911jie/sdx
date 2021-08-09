@@ -16,7 +16,7 @@ class Photo:
         self.wtmk3_src=os.path.join(self.logo_dir,'xiong_and_zimu.png')
 
 
-    def put_mark(self,pic='d:\\temp\\sdx\\004.jpg',logo_type='xiong',new_size=''):
+    def put_mark(self,pic='d:\\temp\\sdx\\004.jpg',logo_type='xiong',new_size='',pos='rb'):
         bg=Image.open(pic)
         #根据exif信息判断旋转，如无exif信息，则根据图片宽高判断。已写入模块
         pic_judged=pics_modify.judge_rotation_and_export_size(bg)
@@ -38,17 +38,28 @@ class Photo:
 
         #横，正方形
         if w>=h:           
-            wtmk_size=[w//12,(wtmk_img.size[1]*w//12)//wtmk_img.size[0]]
+            wtmk_size=[w//18,(wtmk_img.size[1]*w//18)//wtmk_img.size[0]]
             wtmk=wtmk_img.resize(wtmk_size)    
-            wtmk_a=wtmk.split()[3]            
-            p_wtmk=(int(w-wtmk.size[0]*1.2),int(h-wtmk.size[1]*1.2))
+            wtmk_a=wtmk.split()[3]           
+            if pos=='rb': 
+                p_wtmk=(int(w-wtmk.size[0]*1.4),int(h-wtmk.size[1]*1.4))
+            elif pos=='ru':
+                p_wtmk=(int(w-wtmk.size[0]*1.4),int(wtmk.size[1]*0.4))
+            else:
+                print('位置参数错误')
+                exit(0)
             
         else:
-            wtmk_size=[w//6,(wtmk_img.size[1]*w//6)//wtmk_img.size[0]]
+            wtmk_size=[w//9,(wtmk_img.size[1]*w//9)//wtmk_img.size[0]]
             wtmk=wtmk_img.resize(wtmk_size)    
             wtmk_a=wtmk.split()[3]            
-            p_wtmk=(int(w-wtmk.size[0]*1.2),int(h-wtmk.size[1]*1.2))
-
+            if pos=='rb':
+                p_wtmk=(int(w-wtmk.size[0]*1.4),int(h-wtmk.size[1]*1.4))
+            elif pos=='ru':
+                p_wtmk=(int(w-wtmk.size[0]*1.4),int(wtmk.size[1]*0.4))
+            else:
+                print('位置参数错误')
+                exit(0)
 
         bg_2.paste(wtmk,p_wtmk,mask=wtmk_a)
         img=bg_2.convert('RGB')
@@ -60,7 +71,7 @@ class Photo:
                 img=img.resize((int(new_size*w/h),int(new_size)))
         return img
 
-    def group_mark(self,pic_dir='q:\\temp\\sdx\\to_mark',logo_type='pic',new_size=''):
+    def group_mark(self,pic_dir='q:\\temp\\sdx\\to_mark',logo_type='pic',new_size='',pos='ru'):
         out_dir=os.path.join(os.path.dirname(pic_dir),'mark_'+datetime.datetime.now().strftime('%Y%m%d%H%M%S')+'_logotype_'+logo_type)
         
         fns_to_mark=[]
@@ -73,7 +84,7 @@ class Photo:
             n=1
             for fn_to_mark in fns_to_mark:            
                 print('正在处理第 {}/{} 张照片'.format(n,total_pics),end='\r',flush=True)
-                out_pic=self.put_mark(pic=os.path.join(pic_dir,fn_to_mark),logo_type=logo_type,new_size=new_size)
+                out_pic=self.put_mark(pic=os.path.join(pic_dir,fn_to_mark),logo_type=logo_type,new_size=new_size,pos=pos)
                 if not os.path.exists(out_dir):
                     os.makedirs(out_dir)
                 out_pic.save(os.path.join(out_dir,fn_to_mark))
@@ -89,4 +100,4 @@ if __name__=='__main__':
     p=Photo()
     # p.put_mark(pic='q:\\temp\\sdx\\DSC_0659.jpg',logo_type='txt')
     # logo_type参数：xiong 或 zimu 或 xiong_and_zimu
-    p.group_mark(pic_dir='g:\\temp\\sdx\\to_mark',logo_type='xiong_and_zimu',new_size=2400)
+    p.group_mark(pic_dir='d:\\temp\\sdx\\to_mark',logo_type='xiong_and_zimu',new_size=2400,pos='ru')

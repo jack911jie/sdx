@@ -13,6 +13,8 @@ class Photo:
         self.logo_dir=config['logo及二维码文件夹']
         self.wtmk_src=os.path.join(self.logo_dir,'树带熊_logo2_white.png')
         self.wtmk2_src=os.path.join(self.logo_dir,'t_and_b_logo_white.png')
+        self.wtmk3_src=os.path.join(self.logo_dir,'xiong_and_zimu.png')
+
 
     def put_mark(self,pic='d:\\temp\\sdx\\004.jpg',logo_type='xiong',new_size=''):
         bg=Image.open(pic)
@@ -28,6 +30,8 @@ class Photo:
             wtmk_img=Image.open(self.wtmk_src)
         elif logo_type=='zimu':
             wtmk_img=Image.open(self.wtmk2_src)
+        elif logo_type=='xiong_and_zimu':
+            wtmk_img=Image.open(self.wtmk3_src)
         else:
             print('logo类型错误：xiong 或 zimu')
             exit()

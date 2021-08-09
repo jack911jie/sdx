@@ -74,23 +74,11 @@ class NotionApi:
         res_out=[]        
         for result in dat['results']:
             out=Vividict()
-            res_merge=[]
-            for property in result['properties']:
-                if property=='活动时间':
-                    value=result['properties'][property]['date']['start']
-                    out[property]=value
-                if property=='价格':
-                    value=result['properties'][property]['number']
-                    out[property]=value
+            # res_merge=[]
+            for property in result['properties']: 
                 if property=='时间及项目':
                     value=result['properties'][property]['title'][0]['plain_text']
                     out[property]=value
-                if property=='类型':
-                    act_types=[]
-                    for num,act_type in enumerate(result['properties'][property]['multi_select']):
-                        value=result['properties'][property]['multi_select'][num]['name']
-                        act_types.append(value)
-                    out[property]=act_types
                 if property=='姓名':
                     cus_dat=[]
                     for num,cus in enumerate(result['properties'][property]['relation']):
@@ -98,14 +86,28 @@ class NotionApi:
                         res=self.get_cus_name([value,'page'])
                         cus_dat.append(res)
                     out[property]=cus_dat
+                if property=='活动时间':
+                    value=result['properties'][property]['date']['start']
+                    out[property]=value                
+                if property=='类型':
+                    act_types=[]
+                    for num,act_type in enumerate(result['properties'][property]['multi_select']):
+                        value=result['properties'][property]['multi_select'][num]['name']
+                        act_types.append(value)
+                    out[property]=act_types
+                if property=='价格':
+                    value=result['properties'][property]['number']
+                    out[property]=value
+                
                 
                 
             res_out.append(out)
+        # print(res_out)
         print('完成')
         return res_out
 
 
-    def exp_waterbill(self,id,save_name='notion_waterbill',save_format='csv'):        
+    def exp_waterbill(self,id,save_name='notion_waterbill.xlsx'):        
         res=self.get_waterbill(id=id)
         df=pd.DataFrame(res)        
 
@@ -113,15 +115,19 @@ class NotionApi:
         df['姓名']=df['姓名'].apply(lambda x:','.join(x))
         df['类型']=df['类型'].apply(lambda x:','.join(x))
 
+        save_name=os.path.join(self.output_dir,save_name)
+        save_format=save_name.split('.')[-1]
         print('\n正在导出{}文件……'.format(save_format),end='')
-        # df.to_csv(save_name,index=None)
-        save_name=os.path.join(self.output_dir,save_name+'.'+save_format)
         if save_format=='csv':
             df.to_csv(save_name,index=None)
-        if save_format=='xlsx':
+        elif save_format=='xlsx':
             df.to_excel(save_name,index=None)
+        else:
+            print('不能导出该文件类型')
+            exit(0)
         # print(df)
         print('完成')
+        os.startfile(self.output_dir)
 
 class Vividict(dict):
     def __missing__(self, key):
@@ -134,6 +140,6 @@ if __name__=='__main__':
     notion=NotionApi()
     # res=notion.get_waterbill(id=id)
     # print(res)
-    notion.exp_waterbill(id=id,save_name='notiton_export',save_format='xlsx')
+    notion.exp_waterbill(id=id,save_name='notiton_export.xlsx')
 
     

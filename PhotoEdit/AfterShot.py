@@ -10,16 +10,24 @@ class Photo:
     def __init__(self):
         config=readConfig.readConfig(os.path.join(os.path.dirname(__file__),'config','PhotoEdit.config'))
         self.logo_dir=config['logo及二维码文件夹']
-        self.wtmk_src=os.path.join(self.logo_dir,'树带熊logo2_white.png')
+        self.wtmk_src=os.path.join(self.logo_dir,'树带熊_logo2_white.png')
+        self.wtmk2_src=os.path.join(self.logo_dir,'t_and_b_logo_white.png')
 
-    def put_mark(self,pic='d:\\temp\\sdx\\004.jpg'):
+    def put_mark(self,pic='d:\\temp\\sdx\\004.jpg',logo_type='pic'):
         bg=Image.open(pic)
         #根据exif信息判断旋转，如无exif信息，则根据图片宽高判断。已写入模块
         pic_judged=pics_modify.judge_rotation_and_export_size(bg)
         bg,w,h=pic_judged['img'],pic_judged['size'][0],pic_judged['size'][1]
         
-        bg_2=bg.convert('RGBA')            
-        wtmk_img=Image.open(self.wtmk_src)
+        bg_2=bg.convert('RGBA')      
+        
+        if logo_type=='pic':
+            wtmk_img=Image.open(self.wtmk_src)
+        elif logo_type=='txt':
+            wtmk_img=Image.open(self.wtmk2_src)
+        else:
+            print('logo类型错误：pic 或 txt')
+            exit()
 
         #横，正方形
         if w>=h:           
@@ -43,4 +51,4 @@ class Photo:
 
 if __name__=='__main__':
     p=Photo()
-    p.put_mark()
+    p.put_mark(pic='d:\\temp\\sdx\\004.jpg',logo_type='pic')

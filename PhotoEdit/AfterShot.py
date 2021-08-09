@@ -33,18 +33,18 @@ class Photo:
         elif logo_type=='xiong_and_zimu':
             wtmk_img=Image.open(self.wtmk3_src)
         else:
-            print('logo类型错误：xiong 或 zimu')
+            print('logo类型错误：xiong 或 zimu 或 xiong_and_zimu')
             exit()
 
         #横，正方形
         if w>=h:           
-            wtmk_size=[w//12,wtmk_img.size[0]*w//12//wtmk_img.size[1]]
+            wtmk_size=[w//12,(wtmk_img.size[1]*w//12)//wtmk_img.size[0]]
             wtmk=wtmk_img.resize(wtmk_size)    
             wtmk_a=wtmk.split()[3]            
             p_wtmk=(int(w-wtmk.size[0]*1.2),int(h-wtmk.size[1]*1.2))
             
         else:
-            wtmk_size=[w//6,wtmk_img.size[0]*w//6//wtmk_img.size[1]]
+            wtmk_size=[w//6,(wtmk_img.size[1]*w//6)//wtmk_img.size[0]]
             wtmk=wtmk_img.resize(wtmk_size)    
             wtmk_a=wtmk.split()[3]            
             p_wtmk=(int(w-wtmk.size[0]*1.2),int(h-wtmk.size[1]*1.2))
@@ -54,7 +54,10 @@ class Photo:
         img=bg_2.convert('RGB')
         # img.show()
         if new_size:
-            img=img.resize((int(new_size),int(2400*h/w)))
+            if w>=h:
+                img=img.resize((int(new_size),int(new_size*h/w)))
+            else:
+                img=img.resize((int(new_size*w/h),int(new_size)))
         return img
 
     def group_mark(self,pic_dir='q:\\temp\\sdx\\to_mark',logo_type='pic',new_size=''):
@@ -85,4 +88,5 @@ class Photo:
 if __name__=='__main__':
     p=Photo()
     # p.put_mark(pic='q:\\temp\\sdx\\DSC_0659.jpg',logo_type='txt')
-    p.group_mark(pic_dir='q:\\temp\\sdx\\to_mark',logo_type='zimu',new_size=2400)
+    # logo_type参数：xiong 或 zimu 或 xiong_and_zimu
+    p.group_mark(pic_dir='g:\\temp\\sdx\\to_mark',logo_type='xiong_and_zimu',new_size=2400)

@@ -5,6 +5,7 @@ import readConfig
 import pics_modify
 from PIL import Image,ExifTags
 import datetime
+from tqdm import tqdm
 # import exifread
 
 class Photo:
@@ -71,7 +72,7 @@ class Photo:
                 img=img.resize((int(new_size*w/h),int(new_size)))
         return img
 
-    def group_mark(self,pic_dir='q:\\temp\\sdx\\to_mark',logo_type='pic',new_size='',pos='ru'):
+    def group_mark(self,pic_dir='q:\\temp\\sdx\\to_mark',logo_type='pic',new_size='',pos='ru',mode='prgrm',msg_box=''):
         out_dir=os.path.join(os.path.dirname(pic_dir),'mark_'+datetime.datetime.now().strftime('%Y%m%d%H%M%S')+'_logotype_'+logo_type)
         
         fns_to_mark=[]
@@ -82,8 +83,15 @@ class Photo:
         total_pics=len(fns_to_mark)
         if total_pics>0:
             n=1
+            
             for fn_to_mark in fns_to_mark:            
-                print('正在处理第 {}/{} 张照片'.format(n,total_pics),end='\r',flush=True)
+                if mode=='prgrm':
+                    print('正在处理第 {}/{} 张照片'.format(n,total_pics),end='\r',flush=True)
+                elif mode=='gui':
+                    msg_box.delete('1.0','end')
+                    print('正在处理第 {}/{} 张照片'.format(n,total_pics),end='')
+                else:
+                    print('无效的调用模式：prgrm 或 gui')
                 out_pic=self.put_mark(pic=os.path.join(pic_dir,fn_to_mark),logo_type=logo_type,new_size=new_size,pos=pos)
                 if not os.path.exists(out_dir):
                     os.makedirs(out_dir)
@@ -100,4 +108,4 @@ if __name__=='__main__':
     p=Photo()
     # p.put_mark(pic='q:\\temp\\sdx\\DSC_0659.jpg',logo_type='txt')
     # logo_type参数：xiong 或 zimu 或 xiong_and_zimu
-    p.group_mark(pic_dir='d:\\temp\\sdx\\to_mark',logo_type='xiong_and_zimu',new_size=2400,pos='ru')
+    p.group_mark(pic_dir='d:\\temp\\sdx\\to_mark',logo_type='xiong_and_zimu',new_size=2400,pos='ru',mode='prgrm')

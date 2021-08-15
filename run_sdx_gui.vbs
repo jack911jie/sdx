@@ -1,0 +1,1 @@
+CreateObject("WScript.Shell").Run "cmd /c python d:/py/sdx/sdx_gui.py",0

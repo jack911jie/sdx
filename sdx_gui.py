@@ -14,7 +14,7 @@ class SdxGui:
         config=readConfig.readConfig(os.path.join(os.path.dirname(__file__),'PhotoEdit','config','PhotoEdit.config'))
         self.logo_dir=config['logo及二维码文件夹']
 
-    def go(self,pic_dir='e:\\temp\\sdx\\to_mark',logo_type='xiong_and_zimu',new_size=2400,mode='gui'):
+    def go(self,pic_dir='e:\\temp\\sdx\\to_mark',logo_type='xiong_and_zimu',thresh_hold=0.42,new_size=2400,mode='gui'):
         window=tk.Tk()
         window.title('树带熊给照片打标')
         window.geometry('300x300')
@@ -42,7 +42,7 @@ class SdxGui:
             # p.put_mark(pic='q:\\temp\\sdx\\DSC_0659.jpg',logo_type='txt')
             # logo_type参数：xiong 或 zimu 或 xiong_and_zimu
             my_out=output_redirect.myStdout(msg_box)
-            p.group_mark(pic_dir=pic_dir,logo_type=logo_type,new_size=new_size,pos=pos.get(),mode=mode,msg_box=msg_box)
+            p.group_mark(pic_dir=pic_dir,logo_type=logo_type,new_size=new_size,pos=pos.get(),thresh_hold=thresh_hold,mode=mode,msg_box=msg_box)
             my_out.restoreStd()
 
         btn=tk.Button(window,text='给照片添加水印',font=('楷体',12),command=put_mark)      
@@ -56,4 +56,4 @@ class SdxGui:
 
 if __name__=='__main__':
     gui=SdxGui()
-    gui.go()
+    gui.go(pic_dir='d:\\temp\\sdx\\to_mark',logo_type='xiong_and_zimu',thresh_hold=0.42,new_size=2400,mode='gui')

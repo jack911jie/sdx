@@ -6,6 +6,7 @@ import pics_modify
 from PIL import Image,ExifTags
 import datetime
 from tqdm import tqdm
+# import numpy as np
 # import exifread
 
 class Photo:
@@ -15,9 +16,10 @@ class Photo:
         self.wtmk_src=os.path.join(self.logo_dir,'树带熊_logo2_white.png')
         self.wtmk2_src=os.path.join(self.logo_dir,'t_and_b_logo_white.png')
         self.wtmk3_src=os.path.join(self.logo_dir,'xiong_and_zimu.png')
+        self.wtmk3_dark_src=os.path.join(self.logo_dir,'xiong_and_zimu_dark.png')
 
 
-    def put_mark(self,pic='d:\\temp\\sdx\\004.jpg',logo_type='xiong',new_size='',pos='rb'):
+    def put_mark(self,pic='d:\\temp\\sdx\\004.jpg',logo_type='xiong',new_size='',pos='rb',thresh_hold=0.3):
         bg=Image.open(pic)
         #根据exif信息判断旋转，如无exif信息，则根据图片宽高判断。已写入模块
         pic_judged=pics_modify.judge_rotation_and_export_size(bg)
@@ -62,6 +64,18 @@ class Photo:
                 print('位置参数错误')
                 exit(0)
 
+        logo_img=bg.crop((p_wtmk[0],p_wtmk[1],p_wtmk[0]+wtmk.size[0],p_wtmk[1]+wtmk.size[1]))
+        logo_section=pics_modify.evaluate_hsv()
+        logo_sec_hsv=logo_section.evaluate(logo_img)
+        # print(logo_type,logo_sec_hsv)
+        if logo_type=='xiong_and_zimu':
+            if logo_sec_hsv[2]>=thresh_hold:
+                wtmk_dark_img=Image.open(self.wtmk3_dark_src)
+                wtmk=wtmk_dark_img.resize(wtmk_size)
+
+        
+        
+
         bg_2.paste(wtmk,p_wtmk,mask=wtmk_a)
         img=bg_2.convert('RGB')
         # img.show()
@@ -71,8 +85,9 @@ class Photo:
             else:
                 img=img.resize((int(new_size*w/h),int(new_size)))
         return img
+    
 
-    def group_mark(self,pic_dir='q:\\temp\\sdx\\to_mark',logo_type='pic',new_size='',pos='ru',mode='prgrm',msg_box=''):
+    def group_mark(self,pic_dir='q:\\temp\\sdx\\to_mark',logo_type='pic',new_size='',pos='ru',thresh_hold=0.3,mode='prgrm',msg_box=''):
         out_dir=os.path.join(os.path.dirname(pic_dir),'mark_'+datetime.datetime.now().strftime('%Y%m%d%H%M%S')+'_logotype_'+logo_type)
         
         fns_to_mark=[]
@@ -92,7 +107,7 @@ class Photo:
                     print('正在处理第 {}/{} 张照片'.format(n,total_pics),end='')
                 else:
                     print('无效的调用模式：prgrm 或 gui')
-                out_pic=self.put_mark(pic=os.path.join(pic_dir,fn_to_mark),logo_type=logo_type,new_size=new_size,pos=pos)
+                out_pic=self.put_mark(pic=os.path.join(pic_dir,fn_to_mark),logo_type=logo_type,new_size=new_size,pos=pos,thresh_hold=thresh_hold)
                 if not os.path.exists(out_dir):
                     os.makedirs(out_dir)
                 out_pic.save(os.path.join(out_dir,fn_to_mark))
@@ -108,4 +123,4 @@ if __name__=='__main__':
     p=Photo()
     # p.put_mark(pic='q:\\temp\\sdx\\DSC_0659.jpg',logo_type='txt')
     # logo_type参数：xiong 或 zimu 或 xiong_and_zimu
-    p.group_mark(pic_dir='d:\\temp\\sdx\\to_mark',logo_type='xiong_and_zimu',new_size=2400,pos='ru',mode='prgrm')
+    p.group_mark(pic_dir='d:\\temp\\sdx\\to_mark',logo_type='xiong_and_zimu',new_size=2400,pos='ru',thresh_hold=0.42,mode='prgrm')

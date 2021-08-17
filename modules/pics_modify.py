@@ -1,5 +1,7 @@
 import os
 from PIL import Image,ImageDraw
+import colorsys
+import numpy as np
 
 def circle_corner(img,radii=150):
     radii=int(img.size[0]*radii/4032)
@@ -87,3 +89,27 @@ def judge_rotation_and_export_size(img):
         w,h=img.size[0],img.size[1]
 
         return {'img':img,'size':[w,h]}
+
+class evaluate_hsv:
+    def evaluate(self,img):
+        img_arr=np.array(img).tolist()
+        hsv=[]
+        for rgbs in img_arr:
+            hsv_h=[]
+            hsv_s=[]
+            hsv_v=[]
+            for rgb in rgbs:
+                hsv_h.append(self.rgb_hsv(rgb)[0])
+                hsv_s.append(self.rgb_hsv(rgb)[1])
+                hsv_v.append(self.rgb_hsv(rgb)[2])
+            hsv.append([hsv_h,hsv_s,hsv_v])
+        # print(hsv)
+        # return 
+        # print(hsv[2])
+        return [np.mean(hsv[0]),np.mean(hsv[1]),np.mean(hsv[2])]
+
+
+    def rgb_hsv(self,rgb):
+        # img_arr=np.array(img).tolist()
+        h,s,v=colorsys.rgb_to_hsv(rgb[0]/255,rgb[1]/255,rgb[2]/255)
+        return [h,s,v]

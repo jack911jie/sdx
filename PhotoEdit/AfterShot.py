@@ -11,12 +11,12 @@ from tqdm import tqdm
 
 class Photo:
     def __init__(self):
-        config=readConfig.readConfig(os.path.join(os.path.dirname(__file__),'config','PhotoEdit.config'))
+        config=readConfig.readConfig(os.path.join(os.path.dirname(__file__),'config','PhotoEdit_keming.config'))
         self.logo_dir=config['logo及二维码文件夹']
         self.wtmk_src=os.path.join(self.logo_dir,'树带熊_logo2_white.png')
         self.wtmk2_src=os.path.join(self.logo_dir,'t_and_b_logo_white.png')
-        self.wtmk3_src=os.path.join(self.logo_dir,'xiong_and_zimu.png')
-        self.wtmk3_dark_src=os.path.join(self.logo_dir,'xiong_and_zimu_dark.png')
+        self.wtmk3_src=os.path.join(self.logo_dir,'xiong_and_zimu_bold.png')
+        self.wtmk3_dark_src=os.path.join(self.logo_dir,'xiong_and_zimu_bold_dark.png')
 
 
     def put_mark(self,pic='d:\\temp\\sdx\\004.jpg',logo_type='xiong',new_size='',pos='rb',thresh_hold=0.3):
@@ -123,4 +123,4 @@ if __name__=='__main__':
     p=Photo()
     # p.put_mark(pic='q:\\temp\\sdx\\DSC_0659.jpg',logo_type='txt')
     # logo_type参数：xiong 或 zimu 或 xiong_and_zimu
-    p.group_mark(pic_dir='d:\\temp\\sdx\\to_mark',logo_type='xiong_and_zimu',new_size=2400,pos='ru',thresh_hold=0.42,mode='prgrm')
+    p.group_mark(pic_dir='q:\\temp\\sdx\\to_mark',logo_type='xiong_and_zimu',new_size=2400,pos='ru',thresh_hold=0.42,mode='prgrm')
